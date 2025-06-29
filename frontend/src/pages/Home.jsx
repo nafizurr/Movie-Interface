@@ -11,7 +11,8 @@ function Home() {
         {id: 3, title: "Interstellar", release_date: 2014},
         {id: 4, title: "The Shawshank Redemption", release_date: 1994},
         {id: 5, title: "Pulp Fiction", release_date: 1994},
-        {id: 6, title: "The Godfather", release_date: 1972}
+        {id: 6, title: "The Godfather", release_date: 1972},
+        {id: 7, title: "The Dark Knight", release_date: 2008},
     ]
 
     const handleSearch = () => {
