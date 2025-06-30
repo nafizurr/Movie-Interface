@@ -31,4 +31,4 @@ const { addToFavorites, removeFromFavorites, isFavorite } = useMovieContext();
     </div>
 }
 
-export default MovieCard
+export default MovieCard;
