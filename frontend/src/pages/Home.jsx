@@ -1,23 +1,53 @@
 import Moviecard from "../components/Moviecard";
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
+import { searchMovies, getPopularMovies } from "../services/api";
+import '../css/Home.css'; 
 {/*When a state change occurs, the entire component is reran, so me typing "T" into the search bar would be running the component to find me my movies*/}
 
 function Home() {
     const [searchQuery, setSearchQuery] = useState("");
+    const [movies, setMovies] = useState([]); // State to hold the list of movies
+    const [error, setError] = useState(null); // State to hold any error messages
+    const [loading, setLoading] = useState(true); // State to manage loading state
 
-    const movies = [
-        {id: 1, title: "Inception", release_date: 2010},
-        {id: 2, title: "The Matrix", release_date: 1999},
-        {id: 3, title: "Interstellar", release_date: 2014},
-        {id: 4, title: "The Shawshank Redemption", release_date: 1994},
-        {id: 5, title: "Pulp Fiction", release_date: 1994},
-        {id: 6, title: "The Godfather", release_date: 1972},
-        {id: 7, title: "The Dark Knight", release_date: 2008},
-    ]
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const popularMovies = await getPopularMovies(); // Fetch popular movies
+                setMovies(popularMovies); // Set the fetched movies to state
+            } catch (err) {
+                console.log("Error fetching movies:", err); // Log error to console
+                setError("Failed to fetch movies. Please try again later."); // Set error message if fetching fails
+            }
+            finally {
+                setLoading(false); // Set loading to false after fetching movies
+            }
+        };
 
-    const handleSearch = () => {
+        fetchMovies(); // Call the function to fetch movies
+    }, []); // Empty dependency array means this effect runs once when the component mounts
+    
+
+    const handleSearch = async (e) => {
         e.preventDefault(); // Prevent the default form submission behavior
-        alert(searchQuery);
+        
+        if (!searchQuery.trim()) return
+        if(loading) return; // Prevent multiple submissions while loading
+
+        setLoading(true); // Set loading to true while fetching search results
+        try {
+            const searchResults = await searchMovies(searchQuery); // Call the searchMovies function with the search query
+            setMovies(searchResults); // Set the search results to the movies state
+            setError(null); // Clear any previous error messages
+        } catch (err) {
+            console.log("Error searching movies:", err); // Log error to console
+            setError("Failed to fetch search results. Please try again later."); // Set error message if fetching fails
+            
+        } finally {
+            setLoading(false); // Set loading to false after fetching search results
+        }
+
+
         setSearchQuery(""); // Clear the search input after submission
     }
     
@@ -33,15 +63,19 @@ function Home() {
             <button type="submit" className="search-button">Search</button>
         </form>
 
-        <div className="movies-grid">
-            {movies.map((movie) => ( 
+        {error && (<div className="error-message">{error}</div> )}
 
+        {loading ? (
+            <div className="loading">Loading...</div>
+        ) : (
+            <div className="movies-grid">
+            {movies.map((movie) => ( 
                 <Moviecard movie={movie} key={movie.id} />
             ))}
-
-        </div>
+        </div>  
+        )}
     </div>
-    )
+    );
 }
 
 export default Home;
