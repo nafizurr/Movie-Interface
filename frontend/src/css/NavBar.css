@@ -10,10 +10,12 @@
 
 .navbar-brand {
   font-size: 1.5rem;
+  font-family: 'IMPACT';
   font-weight: bold;
 }
 
 .navbar-links {
+  font-family: 'IMPACT';
   display: flex;
   gap: 2rem;
 }
